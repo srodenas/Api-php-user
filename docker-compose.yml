@@ -1,39 +1,66 @@
 version: "3.1"
+
+
 services:
-    db:
+    #Servicio de la base de datos mysql.
+    db-my_app_user:
         image: mysql
         ports: 
-            - "3306:3306"
+            - "3307:3306"
         command: --default-authentication-plugin=mysql_native_password
+
+        #usuario santi/santi, administracion root/santi
         environment:
-            MYSQL_DATABASE: dbname
-            MYSQL_PASSWORD: test
-            MYSQL_ROOT_PASSWORD: test 
+            MYSQL_DATABASE: my_app_user
+            MYSQL_USER: santi
+            MYSQL_PASSWORD: santi
+            MYSQL_ROOT_PASSWORD: santi 
+
+        # Persistimos en dump la inicialización de la base de datos. Monta /dump dentro del contenedor en /docker-entrypoint-initdb.d
+        # Persistimos en conf las configuraciones personalizadas de MySQL. Monta /conf dentro del contenedor en /etc/mysql/conf.d
+        # Persistimos en persistent los datos de la base de datos
         volumes:
             - ./dump:/docker-entrypoint-initdb.d
             - ./conf:/etc/mysql/conf.d
             - persistent:/var/lib/mysql
         networks:
             - default
-    www:
+
+    #Servicio apache
+    www-my_app_user:
         build: .
+        
         ports: 
-            - "80:80"
+            - "8080:80"
+
+        #Montamos www en /var/www/html. Aquí accedemos directamente a los ficheros.    
         volumes:
             - ./www:/var/www/html
-        links:
-            - db
+
+        #El sercicio http se inica después del de mysql    
+        depends_on:
+            - db-my_app_user
         networks:
             - default
-    phpmyadmin:
+
+
+    #Servicio phpmyadmin
+    phpmyadmin-my_app_user:
         image: phpmyadmin/phpmyadmin
-        links: 
-            - db:db
+        
+        #El sercicio http se inica después del de mysql
+        depends_on:
+            - db-my_app_user
+        
         ports:
-            - 8000:80
+            - 8008:80
+
+        #Utilizamos PMA_HOST para especifigar a qué servicio debe conectarse, el de mysql. Sabe como encontrar mysql.
+        #Nos conectaremos a mysql con el usuario root/santi
         environment:
-            MYSQL_USER: root
-            MYSQL_PASSWORD: test
-            MYSQL_ROOT_PASSWORD: test 
+            PMA_HOST: db-my_app_user
+            PMA_USER: root
+            PMA_PASSWORD: santi
+
 volumes:
     persistent:
