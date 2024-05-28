@@ -1,4 +1,5 @@
-Watch the video 👇
+- `santi: srodher115@g.educaand.es`
+Ejemplo de vídeo 👇
 
 [![Watch the video](https://img.youtube.com/vi/v-r_12oezds/maxresdefault.jpg)](https://youtu.be/v-r_12oezds)
 
@@ -12,14 +13,37 @@ I use docker-compose as an orchestrator. To run these containers:
 docker-compose up -d
 ```
 
-Open phpmyadmin at [http://127.0.0.1:8000](http://127.0.0.1:8000)
-Open web browser to look at a simple php example at [http://127.0.0.1:80](http://127.0.0.1:80)
+Para abrir tu phpmyadmin [http://localhost:8008](http://127.0.0.1:8008)
+Para tu contenedor web [http://localhost:8080](http://127.0.0.1:8080)
 
-Clone YourProject on `www/` and then, open web [http://127.0.0.1/YourProject](http://127.0.0.1/YourProject)
 
-Run MySQL client:
+Tu proyecto estará dentro de `www/` and then, open web [http://localhost:puerto/YourProject](http://127.0.0.1:puerto/YourProject)
+por ejemplo http://localhost:8080/api-app-user/endp/register.php
 
-- `docker-compose exec db mysql -u root -p` 
+Como ejecutar el contenedor Msql. 
+
+
+- `docker-compose exec db-my_app_user bash` 
+- `mysql -h db-my_app_user -u santi -psanti -P 3306`
+
+Como ejecutar mysql desde contenedor web.
+
+
+- `docker-compose exec www-my_app_user bash`
+- `apt-get update && apt-get install -y mariadb-client`
+- `mariadb -h db-my_app_user -u santi -p santi -P 3306 my_app_user`
+
+
+Desde postman:
+
+- `http://localhost:8080/api-app-user/endp/register.php`
+{
+    "email": "srodher115@g.educaand.es", 
+    "password" : "12345",
+    "telefono" : "953456545",
+    "nombre" : "santi"  
+}
+
 
 Infrastructure as code!
 
