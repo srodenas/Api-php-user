@@ -5,8 +5,6 @@ require_once '../data/userData.php';
 
 class User extends UserData{
 
-
-
     /*
     Método que valida los campos obligatorios a insertar.
     */
@@ -42,8 +40,6 @@ class User extends UserData{
         Falta el tema de los ficheros.
         */
         Response::result(CODE_DATA_OK, Response::result_alumns('Ok', $users));
-        
-       // return $users;
     }
 
 
@@ -59,10 +55,10 @@ class User extends UserData{
             $params['disponible'] = 1;
           //  echo "Password codificada ". $params['password'];exit;
             $id_new_user = parent::insert_user_db($params);
-            
-            Response::result(CODE_REGISTER_OK, Response::prepared_result_insert('ok', $id_new_user));
-            exit;
-
+            if ($id_new_user > 0)
+                Response::result(CODE_REGISTER_OK, Response::prepared_result_insert('ok', $id_new_user));
+            else
+                Response::result(CODE_ERROR_REGISTER, Response::prepared_result_insert(DETAILS_ERROR_REGISTER, $id_new_user));
         }
     }
 

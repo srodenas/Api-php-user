@@ -17,6 +17,7 @@ define('CODE_RESPONSE_ERROR_LOGIN', 403);
 define('CODE_RESPONSE_ERROR_PERMISSION', 403);
 define('CODE_LOGIN_OK', 201);
 define('CODE_REGISTER_OK', 202);
+define('CODE_ERROR_REGISTER', 403);
 define('CODE_DATA_OK', 203);
 
 
@@ -24,6 +25,7 @@ define('DETAILS_NO_LOGIN', 'Los campos password y email son obligatorios');
 define('DETAILS_ERROR_LOGIN', 'Los campos password/email son incorrectos');
 define('DETAILS_PERMISSION', 'Usted no tiene permisos para esta solicitud');
 define('DETAILS_ERROR_METHOD', 'ERROR METHOD');
+define('DETAILS_ERROR_REGISTER', 'ha ocurrido algún error al registrar los datos');
 
 
 define('DETAILS_NO_EMAIL_FIELD', 'El campo email es obligatorio');
