@@ -16,14 +16,23 @@ class AuthData{
     }
 
 
-
     /*
     Método que devuelve un array asociativo con el id, nombre y email
     */
     public function login_db($email, $password){
-        $query = "SELECT id, nombre, email FROM ".DB_TABLE_USER." WHERE email = '$email' AND password = '$password'"; 
+       // 
+       $stmt = $this->connection->prepare("SELECT id, nombre, email FROM ".DB_TABLE_USER." WHERE email = ? AND password = ?");
+       $stmt->bind_param("ss", $email, $password);
+       $stmt->execute();
+       $result = $stmt->get_result();
+       $result_array = array();
+       while ($row = $result->fetch_assoc()){
+            $result_array[] = $row;  //[ ["id" => 1, "nombre" => 'santi', "email"=>'s@s.com'], ["id" => 2, "nombre" => 'sonia', "email"=>'ss@s.com']]
+       }
        // echo $query; exit;
-        $results = $this->connection->query($query); //ejecutamos la consulta
+       /* 
+       $query = "SELECT id, nombre, email FROM ".DB_TABLE_USER." WHERE email = '$email' AND password = '$password'"; 
+       $results = $this->connection->query($query); //ejecutamos la consulta
         $result_array = array();
 
         if($results != false){
@@ -31,16 +40,40 @@ class AuthData{
                 $result_array[] = $value;  //[ ["id" => 1, "nombre" => 'santi', "email"=>'s@s.com'], ["id" => 2, "nombre" => 'sonia', "email"=>'ss@s.com']]
             }
         }
+        */
         return $result_array;
     }
 
+
+   
 
 
     /*
     Método que actualiza el token recibido según el id.
     */
     public function update_db($id, $new_token){
-        $query = "UPDATE ".DB_TABLE_USER." SET token = '$new_token' WHERE id = $id";
+        $query = "UPDATE ".DB_TABLE_USER." SET token = ? WHERE id = ?";
+        try{
+            if ($stmt = $this->connection->prepare($query)){
+                $stmt->bind_param("si", $new_token, $id);
+                if ($stmt->execute()){
+                    $num_rows = $stmt->affected_rows;
+                }else{
+                    throw new Exception ("Error al ejecutar la consulta de actualizacion");
+                }
+
+            }else{
+                throw new Exception ("Error al preparar la consulta de actualizacion");
+
+            }
+            return $num_rows;
+
+        }catch(Exception $e){
+            error_log("Error update ". $e->getMessage());
+            return 0;
+        }
+        
+       /* $query = "UPDATE ".DB_TABLE_USER." SET token = '$new_token' WHERE id = $id";
        // echo $query; exit;
         $this->connection->query($query);  //ejecutamos la consulta
 
@@ -48,6 +81,8 @@ class AuthData{
             return 0; //no se ha actualizado ninguna fila
         }
         return $this->connection->affected_rows;  //devolvemos el numero de filas afectadas
+        */
+
     }
 
 
