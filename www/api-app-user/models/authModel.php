@@ -7,6 +7,7 @@ use Firebase\JWT\JWT;
 
 class Auth extends AuthData{
     private $id_user = '';
+    private $admin = 0;
 
 
 
@@ -86,7 +87,7 @@ class Auth extends AuthData{
 
 
     //  estos métodos no son necesrios.
-    public function update_token_for_login_db($id, $email){
+  /*  public function update_token_for_login_db($id, $email){
         $data_token = Response::build_token($id, $email);
         $new_token = JWT::encode($id, $new_token);
         parent::update_token_to_login_db($id, $jwt);
@@ -104,7 +105,7 @@ class Auth extends AuthData{
         Response::result(CODE_LOGIN_OK, Response::prepared_result_token('ok', $token));
         exit;
     }
-
+*/
 }
 
 ?>

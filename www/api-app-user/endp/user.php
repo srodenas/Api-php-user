@@ -18,20 +18,20 @@ switch ($_SERVER['REQUEST_METHOD']){
 
     case 'POST':
         /*
-        No lo utilizaremos, ya que no incluímos al Admin.
+        Sólo lo puede hacer el administrador
         */
         break;
 
     case 'PUT':
 
         /*
-        No lo utilizaremos, ya que no incluímos al Admin.
+        Sólo lo puede hacer el administrador
         */
         break;
 
     case 'DELETE':
-        /*
-        No lo utilizaremos, ya que no incluímos al Admin.
+         /*
+        Sólo lo puede hacer el administrador
         */
         break;
 
