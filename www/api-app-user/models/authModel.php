@@ -17,8 +17,9 @@ class Auth extends AuthData{
 		}
 
         //en este punto, hemos pasado correctamente el email y password
-        $user_hash = hash('sha256', $user['password'])  //encriptamos la password.
-        $user = parent::login_db($user['email'], $user_hash)  //logueamos al usuario.
+        $user_hash = hash('sha256', $user['password']);  //encriptamos la password.
+      
+        $user = parent::login_db($user['email'], $user_hash);  //logueamos al usuario.
 
         //si no hay un usuario, informamos
         if (sizeof($user) == 0){
@@ -29,24 +30,32 @@ class Auth extends AuthData{
         //recuperamos el único registro que hay y seteamos el id
         $user = $user[0];
         $id_user = $user['id'];
-
+        //echo "El id del usuario es $id_user y su email es ".$user['email']; exit;
         //construímos de nuevo el token. Lo codificamos, actualizamos y devolvemos.
         $token = Response::build_token($id_user, $user['email']);
-        parent::update_db($id_user, $token);
-        $jwt = JWT::enconde($token, KEY);
-        
-        return $jwt
+        //
+       // echo $token['data']['id']." ".$token['data']['email']." y codifico con la privada ".KEY; exit;
+        $jwt = JWT::encode($token, KEY);
+        //echo "token generado es $jwt"; exit;
+        parent::update_db($id_user, $jwt);
+        //aquí se retormna $jwt y se debe devolver al fronted.
+        Response::result(CODE_LOGIN_OK, Response:: prepared_result_token('ok', $jwt));
+
+        return $jwt;
 
     }
 
 
 
 
-
+/*
+  La idea es verificar con 
+*/
     public function verify_autentication_by_token(){
 
         //comprobamos si nos pasa una api-key
         if ( !isset($_SERVER['HTTP_API_KEY']) ){
+           // echo "No s eha pasado la apikey";
             Response::result(CODE_RESPONSE_ERROR_PERMISSION, Response::prepared_result('error', DETAILS_PERMISSION));
             exit;
         }
@@ -54,12 +63,14 @@ class Auth extends AuthData{
 
         //recuperamos la api-key. Sacamos su id, comprobamos si coincide la key en el registro.
         $jwt = $_SERVER['HTTP_API_KEY'];
-
+        //echo "La api key pasada en la cabecera es la $jwt"; exit;
+       // echo "Estamos en la verificación del token mandado por parámetro. $jwt"; exit;
         try{
-            $data_user = JWT::decode($jwt, KEY, array('HS256'))
-            $id = $data_user->data->id;
-            $user_token = parent::get_token_by_id_db($id)
-
+            $data_user = JWT::decode($jwt, KEY, array('HS256'));  //decodificamos el token y sacamos el id y email.
+            $id = $data_user->data->id;     //necesitamos el id
+            //echo "El id decodificdo es $id"; exit;
+            $user_token = parent::get_token_by_id_db($id);  //queremos devolver el token grabado en la BBDD de ese ID, para ver si coincide
+           // echo $user_token[0];exit;
             if ($user_token != $jwt){
                 throw new Exception();  //lanzamos la excepción para que se capture debajo.
             }
@@ -68,6 +79,7 @@ class Auth extends AuthData{
             Response::result(CODE_RESPONSE_ERROR_PERMISSION, Response::prepared_result('error', DETAILS_PERMISSION));
             exit;
         }
+        //si llegamos aquí, es porque no ha saltado ninguna excepción y por tanto los token coinciden.
     }
 
 

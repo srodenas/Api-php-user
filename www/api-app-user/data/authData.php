@@ -6,7 +6,9 @@ class AuthData{
     private $connection;
 
     public function __construct(){
-        $this->connection = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_TABLE_USER, DB_PORT);
+        $par = DB_HOST.", ".DB_USER.", ".DB_PASSWORD.", ".DB_NAME.", ".DB_PORT;
+        //echo $par;exit;
+        $this->connection = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, DB_PORT);
         if ($this->connection->connect_errno){
             echo 'Error de conexión a la base de datos';
             exit;
@@ -19,7 +21,8 @@ class AuthData{
     Método que devuelve un array asociativo con el id, nombre y email
     */
     public function login_db($email, $password){
-        $query = "SELECT id, nombre, email, FROM ".DB_TABLE_USER." WHERE email = '$email' AND password = '$password'"); 
+        $query = "SELECT id, nombre, email FROM ".DB_TABLE_USER." WHERE email = '$email' AND password = '$password'"; 
+       // echo $query; exit;
         $results = $this->connection->query($query); //ejecutamos la consulta
         $result_array = array();
 
@@ -37,10 +40,11 @@ class AuthData{
     Método que actualiza el token recibido según el id.
     */
     public function update_db($id, $new_token){
-        $query = "UPDATE ".DB_TABLE_USER." SET token = '$token' WHERE id = $id";
+        $query = "UPDATE ".DB_TABLE_USER." SET token = '$new_token' WHERE id = $id";
+       // echo $query; exit;
         $this->connection->query($query);  //ejecutamos la consulta
 
-        if (!$this->connection->afected_rows){
+        if (!$this->connection->affected_rows){
             return 0; //no se ha actualizado ninguna fila
         }
         return $this->connection->affected_rows;  //devolvemos el numero de filas afectadas
@@ -52,16 +56,33 @@ class AuthData{
     */
 
     public function get_token_by_id_db($id){
-        $query = "SELECT token FROM ".DB_TABLE_USER." WHERE id = $id";
-		$results = $this->connection->query($query);
-		$result_array = array();
+        $id = intval($id);
+        $stmt = $this->connection->prepare("SELECT token FROM ".DB_TABLE_USER." WHERE id = ?");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
 
-		if($results != false){
-			foreach ($results as $value) {
-				$result_array[] = $value;
-			}
-		}
-		return $result_array;
+        // Obtener el resultado
+        $result = $stmt->get_result();
+        $result_array = array();
+        while ($row = $result->fetch_assoc()) {
+            $result_array[] = $row;  //estamos metiendo tantas filas, como registros nos haya dado.
+        }
+        //echo $result_array[0]['token'];exit;
+        
+       //    $this->echo_data(); exit;
+       if (! empty($result_array))
+		    return $result_array[0]['token'];
+        else
+            return null;
+    }
+
+
+    public function echo_data($result_array){
+        foreach ($result_array as $reg) {
+            foreach ($reg as $key => $value) {
+                echo ($key) . ': ' . $value . '<br>';
+            }
+        }
     }
 
 }

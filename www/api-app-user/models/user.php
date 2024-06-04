@@ -38,7 +38,12 @@ class User extends UserData{
     public function get_users($params){
 
         $users = parent::get_users_db($params);
-        return $users;
+        /*
+        Falta el tema de los ficheros.
+        */
+        Response::result(CODE_DATA_OK, Response::result_alumns('Ok', $users));
+        
+       // return $users;
     }
 
 

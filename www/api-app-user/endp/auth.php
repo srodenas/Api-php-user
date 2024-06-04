@@ -4,7 +4,6 @@
 require_once '../models/authModel.php';
 
 $auth = new Auth(); //Nos creamos un objeto de autenticación.
-
 /*
 
 */
@@ -15,7 +14,7 @@ switch ($_SERVER['REQUEST_METHOD']){
         2.- Comprobamos si existe el usuario. En caso afirmativo, nos devuelve el token, pero actualizado.
         */
         $user = json_decode(file_get_contents('php://input'), true);
-        $user_token = $auth->sigIn($user);  //si existe el usuario, devuelve el token
+        $auth->sigIn($user);  //si existe el usuario, devuelve el token
     
 
 }

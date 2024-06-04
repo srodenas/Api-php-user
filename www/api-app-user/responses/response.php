@@ -45,6 +45,14 @@ class Response{
     }
 
 
+    public static function result_alumns($result, $alumns){
+        $response = array(
+            'result' => $result,
+            'usuarios' => $alumns
+        );
+
+        return $response;
+    }
 
 
     public static function build_token($id, $email){
@@ -55,6 +63,7 @@ class Response{
                 'email' => $email
             )
         );
+     //   echo $id." ".$data_token['data']['id']." ".$data_token['data']['email']; exit;
         return $data_token;
     }
 }

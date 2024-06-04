@@ -21,12 +21,14 @@ class UserData{
     */
     public function get_users_db(){
         $query = "SELECT * FROM ".DB_TABLE_USER;
+       // echo $query; exit;
         $results = $this->connection->query($query);
         $array_users = array();
 
         foreach($results as $register_user){
             $array_users[] = $register_user;
         }
+        //echo count($array_users);
         return $array_users;
     }
 
