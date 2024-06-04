@@ -5,6 +5,7 @@ services:
     #Servicio de la base de datos mysql.
     db-my_app_user:
         image: mysql
+        platform: linux/amd64
         ports: 
             - "3307:3306"
         command: --default-authentication-plugin=mysql_native_password
@@ -47,6 +48,7 @@ services:
     #Servicio phpmyadmin
     phpmyadmin-my_app_user:
         image: phpmyadmin/phpmyadmin
+        platform: linux/amd64
         
         #El sercicio http se inica después del de mysql
         depends_on:
